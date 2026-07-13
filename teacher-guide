@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1CZMQ0ZQG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-Q1CZMQ0ZQG');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>Sentence Piano — Teacher's Guide</title>
+<style>
+  :root {
+    --ink: #241546;
+    --accent: #5B3A9B;
+    --accent2: #1AA3A3;
+    --page: #f1eef9;
+    --card: #ffffff;
+    --soft: #6a6390;
+    --line: #e0d9f0;
+    --chip: #efeaf9;
+    --focus: #ffce3a;
+  }
+  @media (prefers-color-scheme: dark) { :root { --page: #1a1030; } }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page); color: var(--ink); line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ---- top bar ---- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--accent); color: #fff;
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 10px clamp(12px, 4vw, 28px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  }
+  .topbar .brand { font-weight: 800; margin-inline-end: auto; font-size: clamp(1rem, 3vw, 1.2rem); }
+  .tb-btn {
+    appearance: none; text-decoration: none; cursor: pointer;
+    font-family: inherit; font-weight: 700; font-size: 0.92rem;
+    border: 1.5px solid rgba(255,255,255,0.55); color: #fff; background: rgba(255,255,255,0.12);
+    padding: 8px 14px; border-radius: 999px; white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+  .tb-btn:hover { background: rgba(255,255,255,0.24); }
+  .tb-btn.solid { background: #fff; color: var(--accent); border-color: #fff; }
+  .tb-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: clamp(14px, 3vw, 30px); }
+  .sheet {
+    background: var(--card); border-radius: 18px; padding: clamp(18px, 4vw, 40px);
+    box-shadow: 0 12px 40px rgba(36,21,70,0.10);
+  }
+
+  h1 { font-size: clamp(1.7rem, 5vw, 2.4rem); color: var(--accent); margin: 0 0 4px; }
+  .tagline { color: var(--ink); font-size: clamp(1rem, 2.6vw, 1.15rem); font-weight: 600; margin: 0 0 6px; }
+  .rule { height: 4px; background: var(--accent2); border-radius: 4px; width: 90px; margin: 12px 0 22px; }
+  h2 { font-size: clamp(1.25rem, 3.6vw, 1.6rem); color: var(--accent); margin: 34px 0 10px; padding-top: 6px; border-top: 1px solid var(--line); }
+  h2:first-of-type { border-top: none; }
+  h3 { font-size: clamp(1.05rem, 3vw, 1.25rem); color: var(--accent2); margin: 20px 0 6px; }
+  p { margin: 0 0 12px; }
+  ul { margin: 0 0 14px; padding-inline-start: 22px; }
+  li { margin-bottom: 6px; }
+  strong { color: var(--ink); }
+  a { color: var(--accent); }
+  .muted { color: var(--soft); }
+  .small { font-size: 0.9rem; }
+
+  /* callout */
+  .callout {
+    background: #e7f5f5; border: 1px solid #bfe6e6; border-radius: 12px;
+    padding: 14px 16px; margin: 14px 0 18px;
+  }
+  .callout .lbl { font-weight: 800; color: var(--accent); }
+
+  /* downloads */
+  .downloads {
+    background: linear-gradient(180deg, #f6f2ff, #efeaf9);
+    border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 18px 0 6px;
+  }
+  .downloads h2 { border: none; margin: 0 0 10px; padding: 0; }
+  .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .dl {
+    display: flex; align-items: center; gap: 10px; text-decoration: none;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    color: var(--ink); transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .dl:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(36,21,70,0.12); border-color: #c9bdec; }
+  .dl:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .dl .ic { font-size: 1.5rem; line-height: 1; }
+  .dl .tt { font-weight: 700; }
+  .dl .sub { font-size: 0.82rem; color: var(--soft); }
+
+  /* tables */
+  .tblwrap { overflow-x: auto; margin: 6px 0 18px; border-radius: 10px; border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.93rem; }
+  th, td { text-align: start; vertical-align: top; padding: 9px 11px; border-bottom: 1px solid var(--line); }
+  th { background: var(--accent); color: #fff; font-weight: 700; position: sticky; top: 0; }
+  tbody tr:nth-child(even) td { background: #faf8fe; }
+  td .b { font-weight: 700; color: var(--ink); }
+  .center { text-align: center; }
+
+  /* activity cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 8px 0 10px; }
+  .cardx {
+    background: #faf8fe; border: 1px solid var(--line); border-inline-start: 5px solid var(--accent2);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .cardx .nm { font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .cardx .row { font-size: 0.9rem; margin-bottom: 4px; }
+  .cardx .row .k { font-weight: 700; color: var(--accent); }
+  .cardx .tag { font-size: 0.82rem; color: var(--soft); font-style: italic; }
+
+  footer { text-align: center; color: var(--soft); font-size: 0.85rem; margin: 26px 0 40px; }
+
+  @media print {
+    .topbar, .no-print { display: none !important; }
+    body { background: #fff; }
+    .wrap { max-width: 100%; padding: 0; }
+    .sheet { box-shadow: none; border-radius: 0; padding: 0; }
+    .tblwrap { overflow: visible; }
+    a { color: var(--ink); text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar no-print">
+    <span class="brand">🎵 Sentence Piano — Teacher's Guide</span>
+    <a class="tb-btn" href="./sentence-piano.html">← Open the tool</a>
+    <a class="tb-btn solid" href="./Sentence-Piano-Teacher-Guide.pdf" download>⬇ PDF</a>
+    <a class="tb-btn" href="./Sentence-Piano-Teacher-Guide.docx" download>⬇ Word</a>
+    <button type="button" class="tb-btn" id="printBtn">🖨 Print</button>
+  </div>
+
+  <div class="wrap">
+   <div class="sheet">
+    <h1>🎵 Sentence Piano — Teacher's Guide</h1>
+    <p class="tagline">A music‑and‑literacy tool for diverse learners — Foundation Levels A–D to Level 2 (Year 2), English &amp; Music.</p>
+    <div class="rule"></div>
+    <p>Sentence Piano turns typing into music: every letter plays a note, whole sentences play back as melodies in 4/4 time, and children can shape the rhythm of what they write. It builds <strong>fine motor control, keyboard and typing skills, letter–sound knowledge, early writing and core music concepts</strong> at the same time — with immediate see‑hear‑do feedback and sound that always stays in tune.</p>
+
+    <!-- DOWNLOADS -->
+    <section class="downloads no-print">
+      <h2>Downloads &amp; resources</h2>
+      <div class="dl-grid">
+        <a class="dl" href="./sentence-piano.html"><span class="ic">🎹</span><span><span class="tt">Open Sentence Piano</span><br><span class="sub">Launch the tool (tablet or computer)</span></span></a>
+        <a class="dl" href="./Sentence-Piano-Teacher-Guide.pdf" download><span class="ic">📄</span><span><span class="tt">Teacher's Guide (PDF)</span><br><span class="sub">Full guide — print or save</span></span></a>
+        <a class="dl" href="./Sentence-Piano-Teacher-Guide.docx" download><span class="ic">📝</span><span><span class="tt">Teacher's Guide (Word)</span><br><span class="sub">Editable version</span></span></a>
+        <a class="dl" href="./Sentence-Piano-Cheat-Sheet.pdf" download><span class="ic">⚡</span><span><span class="tt">One‑page cheat sheet (PDF)</span><br><span class="sub">Progression + top activities</span></span></a>
+        <a class="dl" href="./note-colour-chart.html"><span class="ic">🌈</span><span><span class="tt">Letter → note wall chart</span><br><span class="sub">Open the printable chart</span></span></a>
+        <a class="dl" href="./note-colour-chart.pdf" download><span class="ic">⬇</span><span><span class="tt">Wall chart (PDF)</span><br><span class="sub">Download &amp; print for the wall</span></span></a>
+      </div>
+    </section>
+
+    <div class="callout">
+      <span class="lbl">About this guide.</span> This guide maps Sentence Piano to the <strong>Victorian Curriculum F–10</strong>. In 2026 Victoria is moving to Version 2.0 (English and Mathematics from 2025; the Arts, including Music, from 2026). The example content‑description codes are drawn from the VCAA Victorian Curriculum and are provided as illustrative anchors — please confirm the exact code and level for each learner against your school's current planning documents.
+    </div>
+
+    <!-- 1 -->
+    <h2>1 · About Sentence Piano</h2>
+    <p>Sentence Piano is a free, offline web page — one file that opens in any browser on a tablet or a computer, with nothing to install and no internet needed. It presents a colourful on‑screen keyboard where the letter keys play musical notes. A child can play freely, or type a sentence and hear it played back as a tune.</p>
+    <p>Every letter A–Z is mapped to a note from a single <strong>C‑major octave scale</strong> (the notes cycle C, D, E, F, G, A, B, C). Because everything stays in one key, <strong>whatever a child types always sounds pleasant</strong> — there are no “wrong” notes, which keeps the experience rewarding and low‑stress.</p>
+    <h3>What it develops</h3>
+    <ul>
+      <li><strong>Fine motor skills</strong> — locating and pressing keys, isolating a finger, building from single presses to sequences.</li>
+      <li><strong>Typing &amp; keyboard familiarity</strong> — finding letters on a real QWERTY layout, left‑to‑right order, the space bar.</li>
+      <li><strong>Letter–sound &amp; phonics</strong> — matching a letter's shape, name and sound; hearing sounds in words.</li>
+      <li><strong>Early writing</strong> — building words and simple sentences, word spaces, copying a modelled sentence.</li>
+      <li><strong>Music</strong> — beat, rhythm, note length, pitch, tempo and dynamics; composing, performing and responding.</li>
+      <li><strong>Communication &amp; social skills</strong> — turn‑taking, choice‑making, sharing and responding to a tune.</li>
+    </ul>
+    <h3>The companion files</h3>
+    <ul>
+      <li><strong>Sentence Piano</strong> — the main tool (Free play + Follow along).</li>
+      <li><strong>Wall chart</strong> — a printable letter → note → colour chart to display beside the device.</li>
+      <li><strong>Simple keyboard</strong> — a 7‑key version (A S D F G H J) for the very first cause‑and‑effect stage.</li>
+    </ul>
+
+    <!-- 2 -->
+    <h2>2 · Getting started</h2>
+    <p>Open the tool by tapping or double‑clicking it. On some browsers the sound starts after the <strong>first tap or key press</strong> — this simply “wakes up” the audio and is completely normal.</p>
+    <h3>The parts of the screen</h3>
+    <ul>
+      <li><strong>Free play mode</strong> — invent tunes from your own words; each key plays instantly as you type.</li>
+      <li><strong>Follow along mode</strong> — copy a target sentence; the next letter glows, correct keys light up and tick off, and finishing a sentence earns a ⭐ and plays the tune back.</li>
+      <li><strong>The on‑screen keyboard</strong> — tap the colour‑coded keys (great on a tablet); each colour is a note.</li>
+      <li><strong>“Your sentence as music” strip</strong> — tap a coloured letter tile and pick its note length from the note pictures (quaver, crotchet, minim or semibreve); longer notes look wider.</li>
+      <li><strong>▶ Play it back</strong> — plays the sentence in 4/4 time: each letter is one beat, each space is a one‑beat rest.</li>
+      <li><strong>Speed &amp; Notes buttons</strong> — Slow / Medium / Fast tempo, and show or hide the note names.</li>
+      <li><strong>⚙️ For grown‑ups</strong> — a discreet button where an adult can type a custom sentence for the child to copy.</li>
+    </ul>
+    <h3>How the sound works (for planning)</h3>
+    <p>Each letter plays its note; a space is a silent beat (a rest). Note lengths follow standard values — a quaver is half a beat, a crotchet one beat, a minim two beats and a semibreve four beats — and four beats make one bar of 4/4. This lets the same tool move from “press a key, hear a sound” all the way to composing and reading simple rhythm.</p>
+
+    <!-- 3 -->
+    <h2>3 · A note on the Victorian Curriculum (2026)</h2>
+    <p>Victoria is implementing the <strong>Victorian Curriculum F–10 Version 2.0</strong>. English and Mathematics have been in place since 2025, and the Arts (including Music) from 2026.</p>
+    <p><strong>Foundation Levels A–D</strong> (“Towards Foundation”) provide a developmentally sequenced continuum for students with intellectual or cognitive disability or learning delay, leading into the Foundation level. In 2026, English Foundation Levels A–D continue under Version 1.0. Throughout this guide, <strong>Level 2 is equivalent to Year 2.</strong></p>
+    <ul>
+      <li><strong>English (Version 2.0):</strong> strands are <strong>Language, Literature and Literacy</strong>; achievement is reported across three modes — <strong>Speaking and Listening, Reading and Viewing, and Writing.</strong></li>
+      <li><strong>Music (Version 2.0):</strong> strands are <strong>Exploring, Developing Practices, Creating and Presenting</strong>. At Foundation the named musical elements include <strong>beat, rhythm, pitch, dynamics and tempo</strong>, and discriminating sound from silence, loud from soft, and fast from slow.</li>
+    </ul>
+
+    <!-- 4 -->
+    <h2>4 · The learning progression at a glance</h2>
+    <p>Sentence Piano supports a gradual climb from the earliest cause‑and‑effect responses to composing and performing. The same tool grows with the learner — you simply change how it is used.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Stage</th><th>What the child does</th><th>Focus skills</th><th>Curriculum band &amp; strands</th></tr></thead>
+      <tbody>
+        <tr><td><span class="b">1 · Sense &amp; respond</span></td><td>Presses any key and gets an instant sound + colour + light.</td><td>Attend, respond, cause and effect; single‑finger press.</td><td><span class="b">Levels A–B</span><br>Music: Exploring · English (S&amp;L)</td></tr>
+        <tr><td><span class="b">2 · Letters &amp; sounds</span></td><td>Finds a named letter and hears its note; matches shape, name and sound.</td><td>Letter recognition, letter–sound knowledge, targeting.</td><td><span class="b">Levels C–D</span><br>English: Language/Literacy · Music: Exploring</td></tr>
+        <tr><td><span class="b">3 · Words &amp; sentences</span></td><td>Builds short words and simple sentences, then plays them.</td><td>Blending sounds, word building, sentence concept, spaces.</td><td><span class="b">Level D – Foundation</span><br>English: Literacy · Music: Creating</td></tr>
+        <tr><td><span class="b">4 · Copy &amp; type</span></td><td>Follow‑along mode: copies a modelled sentence, letter by letter.</td><td>Accuracy, one‑to‑one matching, keyboarding, persistence.</td><td><span class="b">Foundation – Level 1</span><br>English: Writing · Music: Developing Practices</td></tr>
+        <tr><td><span class="b">5 · Rhythm &amp; compose</span></td><td>Sets note lengths, changes tempo, plays in 4/4.</td><td>Beat, rhythm, note values, composing/arranging, tempo.</td><td><span class="b">Levels 1–2</span><br>Music: Creating · English: rhythm patterns</td></tr>
+        <tr><td><span class="b">6 · Perform &amp; respond</span></td><td>Plays a finished tune to peers; says what they like or would change.</td><td>Performing, listening, expressing preferences.</td><td><span class="b">Levels 1–2</span><br>Music: Presenting/Responding · English (S&amp;L)</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 5 -->
+    <h2>5 · How the tool maps to the curriculum</h2>
+    <p>Each feature of Sentence Piano does double duty across English and Music. Appendix A lists example content‑description codes.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Tool feature</th><th>English (strand → skill)</th><th>Music (strand → skill)</th></tr></thead>
+      <tbody>
+        <tr><td class="b">Press a key → note + colour + light</td><td>Speaking &amp; Listening — attending and responding; cause‑and‑effect communication.</td><td>Exploring — attending to and making sound; sound vs silence.</td></tr>
+        <tr><td class="b">Coloured letter keys &amp; colour chart</td><td>Language / Phonics — matching a letter's shape, name and sound.</td><td>Exploring — associating colour with pitch; high and low sounds.</td></tr>
+        <tr><td class="b">Type a word or sentence</td><td>Literacy / Creating texts — using letters and words to make a statement; word spaces.</td><td>Creating — organising sounds into a short pattern or phrase.</td></tr>
+        <tr><td class="b">Follow‑along: copy a target</td><td>Writing — copying and forming letters; one‑to‑one matching; sentence order.</td><td>Developing Practices — rehearsing and reproducing a given pattern.</td></tr>
+        <tr><td class="b">Play back in 4/4; spaces = rests</td><td>Literature — hearing rhythm and sound patterns in language.</td><td>Exploring / Creating — beat, rhythm, sound and silence (rests).</td></tr>
+        <tr><td class="b">Set note lengths (½/1/2/4 beats)</td><td>Literacy — segmenting and sequencing; patterning.</td><td>Creating — note values, composing and arranging within a bar.</td></tr>
+        <tr><td class="b">Change tempo (Slow/Med/Fast)</td><td>Speaking &amp; Listening — pace and expression in spoken language.</td><td>Exploring — tempo; fast vs slow.</td></tr>
+        <tr><td class="b">Play a tune to peers; respond</td><td>Speaking &amp; Listening — presenting, and expressing likes/dislikes with reasons.</td><td>Presenting / Responding — performing and describing music.</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 6 -->
+    <h2>6 · Games &amp; activities</h2>
+    <p>A bank of ways to use the tool, grouped by developmental stage. Pick the group that matches the learner and move up or down as needed.</p>
+
+    <h3>A. Sense &amp; respond (Levels A–B)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Make it sing</div><div class="row"><span class="k">Play:</span> Support the child (hand‑over‑hand if needed) to press a key; react with delight; wait; invite another press.</div><div class="row"><span class="k">Builds:</span> attention, cause‑and‑effect, intentional action.</div><div class="tag">Music: Exploring · English: S&amp;L. Easier: one bright key. Harder: offer two keys to choose.</div></div>
+      <div class="cardx"><div class="nm">Copy me (call &amp; response)</div><div class="row"><span class="k">Play:</span> You press a key, then invite the child to press one. Build a simple back‑and‑forth.</div><div class="row"><span class="k">Builds:</span> turn‑taking, imitation, joint attention.</div><div class="tag">Music: Exploring · English: S&amp;L. Harder: copy a two‑key pattern.</div></div>
+      <div class="cardx"><div class="nm">Colour hunt</div><div class="row"><span class="k">Play:</span> Name or show a colour (use the chart); help the child find and press that key.</div><div class="row"><span class="k">Builds:</span> colour matching, scanning, targeting.</div><div class="tag">Music: Exploring · English: S&amp;L. Harder: find the colour then name the note.</div></div>
+    </div>
+
+    <h3>B. Letters &amp; sounds (Levels C–D / Foundation)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Find the letter</div><div class="row"><span class="k">Play:</span> Say a letter name or its sound (“find /m/”). The child locates and presses that key.</div><div class="row"><span class="k">Builds:</span> letter recognition, letter–sound knowledge.</div><div class="tag">English: Phonics · Music: Exploring. Harder: find three letters in a row.</div></div>
+      <div class="cardx"><div class="nm">My name song</div><div class="row"><span class="k">Play:</span> Help the child type their own name and press ▶ to hear it as a tune.</div><div class="row"><span class="k">Builds:</span> recognising letters in own name, left‑to‑right order.</div><div class="tag">English: Writing · Music: Creating. Easier: pre‑type the name; they press play.</div></div>
+      <div class="cardx"><div class="nm">First sound</div><div class="row"><span class="k">Play:</span> Show a picture; the child presses the key for its beginning sound (cat → C).</div><div class="row"><span class="k">Builds:</span> initial phoneme awareness, letter–sound links.</div><div class="tag">English: Phonics · Music: Exploring. Harder: first and last sound.</div></div>
+      <div class="cardx"><div class="nm">Rainbow letters</div><div class="row"><span class="k">Play:</span> Match a letter on the printed chart to the same key on screen and play it.</div><div class="row"><span class="k">Builds:</span> letter matching, print‑to‑screen transfer.</div><div class="tag">English: Language · Music: Exploring. Harder: match a short set to spell a word.</div></div>
+    </div>
+
+    <h3>C. Words &amp; sentences (Foundation / Level 1)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Word of the day</div><div class="row"><span class="k">Play:</span> Choose a simple word (cat, sun, mum); sound it out, build it key by key, then play it.</div><div class="row"><span class="k">Builds:</span> blending sounds, building CVC words.</div><div class="tag">English: Phonics/Literacy · Music: Creating. Easier: a two‑letter word.</div></div>
+      <div class="cardx"><div class="nm">Silly sentence</div><div class="row"><span class="k">Play:</span> Build a short, fun sentence (“we can hop”). Press ▶ to hear its melody.</div><div class="row"><span class="k">Builds:</span> sentence concept, word order, word spaces.</div><div class="tag">English: Literacy · Music: Creating. Harder: add a describing word.</div></div>
+      <div class="cardx"><div class="nm">Where do the rests go?</div><div class="row"><span class="k">Play:</span> Type a sentence and watch spaces become one‑beat rests; clap the words, pausing on rests.</div><div class="row"><span class="k">Builds:</span> word boundaries, beat and rest.</div><div class="tag">English: Writing · Music: Exploring/Creating. Harder: count the rests.</div></div>
+    </div>
+
+    <h3>D. Copy &amp; type — Follow‑along (Foundation – Level 2)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Copy the sentence</div><div class="row"><span class="k">Play:</span> In Follow‑along mode, the child copies the highlighted target letter by letter; finishing earns a ⭐.</div><div class="row"><span class="k">Builds:</span> accuracy, one‑to‑one matching, keyboarding.</div><div class="tag">English: Writing · Music: Developing Practices. Harder: turn Notes off, longer sentence.</div></div>
+      <div class="cardx"><div class="nm">Grown‑up sets the goal</div><div class="row"><span class="k">Play:</span> Use the ⚙️ For grown‑ups button to set a target matching this week's learning (a name, a word, a topic sentence).</div><div class="row"><span class="k">Builds:</span> targeted vocabulary/sentence practice.</div><div class="tag">English: Writing/Literacy · Music: Developing Practices.</div></div>
+      <div class="cardx"><div class="nm">Two‑star challenge</div><div class="row"><span class="k">Play:</span> Set a small goal — finish two sentences to earn two stars; track stars across the session.</div><div class="row"><span class="k">Builds:</span> goal‑setting, self‑regulation, resilience.</div><div class="tag">English: Writing · Personal &amp; Social Capability.</div></div>
+    </div>
+
+    <h3>E. Rhythm &amp; composing (Levels 1–2)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Long and short</div><div class="row"><span class="k">Play:</span> Clap a short rhythm; then tap tiles to set matching note lengths (½, 1, 2, 4) and play it back.</div><div class="row"><span class="k">Builds:</span> beat vs rhythm, note values.</div><div class="tag">Music: Creating · English: patterning. Harder: match a four‑note pattern.</div></div>
+      <div class="cardx"><div class="nm">Name that value</div><div class="row"><span class="k">Play:</span> Point to a tile; the child names its length — quaver, crotchet, minim or semibreve.</div><div class="row"><span class="k">Builds:</span> music vocabulary, symbol–value matching.</div><div class="tag">Music: Developing Practices/Creating. Harder: order shortest to longest.</div></div>
+      <div class="cardx"><div class="nm">Compose a four‑beat bar</div><div class="row"><span class="k">Play:</span> Make the notes in one dashed bar add to four beats (e.g. two minims). Play and check.</div><div class="row"><span class="k">Builds:</span> counting beats, composing in 4/4.</div><div class="tag">Music: Creating · Numeracy. Harder: two bars, different rhythms.</div></div>
+      <div class="cardx"><div class="nm">Fast and slow</div><div class="row"><span class="k">Play:</span> Play the same sentence at Slow, then Fast. Talk about how the feeling changes.</div><div class="row"><span class="k">Builds:</span> tempo, expression, musical choices.</div><div class="tag">Music: Exploring · English: S&amp;L. Harder: match a tempo to a mood word.</div></div>
+    </div>
+
+    <h3>F. Perform &amp; respond (Levels 1–2)</h3>
+    <div class="cards">
+      <div class="cardx"><div class="nm">Mini concert</div><div class="row"><span class="k">Play:</span> The child performs their finished sentence‑tune to a partner or the class, pressing ▶ and introducing it.</div><div class="row"><span class="k">Builds:</span> performing, confidence, oral language.</div><div class="tag">Music: Presenting · English: S&amp;L. Easier: perform to one adult.</div></div>
+      <div class="cardx"><div class="nm">I like… I would change…</div><div class="row"><span class="k">Play:</span> After a peer's tune, each child says one thing they liked and one gentle idea to try.</div><div class="row"><span class="k">Builds:</span> listening, expressing preferences with reasons.</div><div class="tag">Music: Responding · English: S&amp;L. Harder: give a reason.</div></div>
+    </div>
+
+    <!-- 7 -->
+    <h2>7 · Differentiation &amp; access (Universal Design for Learning)</h2>
+    <h3>Ways in (engagement)</h3>
+    <ul>
+      <li>Follow the child's interest — start with their name, a favourite word, or a topic they love.</li>
+      <li>Use the ⭐ stars and short goals to motivate; keep sessions short and successful.</li>
+      <li>Because every tune stays in key, mistakes still sound good — this protects confidence.</li>
+    </ul>
+    <h3>Ways to show it (representation)</h3>
+    <ul>
+      <li>Turn Notes on to reveal note names; turn them off as skills grow.</li>
+      <li>Pair the screen with the printed colour chart so learning transfers between print and device.</li>
+      <li>Colour, letter, sound and note length give four ways to recognise the same key.</li>
+    </ul>
+    <h3>Ways to respond (action &amp; expression)</h3>
+    <ul>
+      <li>Tap on a tablet or type on a keyboard; use one finger, a pointer, or hand‑over‑hand support.</li>
+      <li>Slow the tempo for learners who need more time between beats.</li>
+      <li>Work one letter at a time in Follow‑along mode; the target waits patiently.</li>
+    </ul>
+    <h3>Sensory &amp; wellbeing</h3>
+    <ul>
+      <li>If a learner is sensitive to movement, turn on the device's “reduce motion” setting — the app calms its animations automatically.</li>
+      <li>Manage volume, offer headphones, and watch for over‑stimulation; the predictable, in‑key sound is designed to be calming.</li>
+    </ul>
+
+    <!-- 8 -->
+    <h2>8 · Observing &amp; recording learning</h2>
+    <p>Children may show learning in different ways depending on their communication, physical access and needs. Watch for these signs, which align with the achievement‑standard language of the relevant levels.</p>
+    <ul>
+      <li>Attends to, and acts to repeat, a sound (Levels A–B).</li>
+      <li>Presses a named letter and links it to a sound (Levels C–D).</li>
+      <li>Builds and plays a short word or simple sentence (Level D – Foundation).</li>
+      <li>Copies a modelled sentence accurately in Follow‑along mode (Foundation – Level 1).</li>
+      <li>Sets note lengths and keeps a four‑beat bar (Levels 1–2).</li>
+      <li>Performs a tune and says what they like or would change (Levels 1–2).</li>
+    </ul>
+    <p class="muted small">A printable observation record is included in the Word and PDF versions of this guide (Downloads above).</p>
+
+    <!-- Appendix A -->
+    <h2>Appendix A · Curriculum reference (example content descriptions)</h2>
+    <p>The codes below are drawn from the VCAA Victorian Curriculum and are provided as <strong>illustrative anchors</strong>. Because Victoria is moving from Version 1.0 to Version 2.0 across 2025–2027, please confirm the exact current code and level for each learner in your school's planning documents.</p>
+    <h3>English (examples — Towards Foundation Level D shown; skills continue to Level 2)</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Code</th><th>Content description</th><th>Where Sentence Piano builds it</th></tr></thead>
+      <tbody>
+        <tr><td class="b">VCELA111</td><td>Know that a letter can be the same but look different (capital and lower‑case) and match some letters with their sound and name.</td><td>Coloured keys and the colour chart; letter name + note on each key.</td></tr>
+        <tr><td class="b">VCELA112</td><td>Identify and make sounds associated with the beginning letter of words or images.</td><td>“First sound” and “Find the letter”.</td></tr>
+        <tr><td class="b">VCELA133</td><td>Identify the sounds within familiar words.</td><td>Sounding out and building “Word of the day”.</td></tr>
+        <tr><td class="b">VCELA134</td><td>Blend sounds to produce familiar single‑syllable words and identify words with the same rime.</td><td>Blending to build and play CVC words.</td></tr>
+        <tr><td class="b">VCELA121</td><td>Copy own name and recognise some letters within it; pausing is shown as a full stop.</td><td>“My name song”; spaces heard as rests.</td></tr>
+        <tr><td class="b">VCELY125</td><td>Use symbols, letters and words to create a simple statement about an idea or event.</td><td>“Silly sentence” in Free play.</td></tr>
+        <tr><td class="b">VCELY127</td><td>Copy and write letters, symbols and numbers.</td><td>Follow‑along “Copy the sentence”.</td></tr>
+        <tr><td class="b">VCELY128</td><td>Use software or an application by selecting images and suggesting simple sentences.</td><td>Using the app itself to compose and play a sentence.</td></tr>
+        <tr><td class="b">VCELT138</td><td>Identify and copy the rhythms and sound patterns in stories, rhymes and songs.</td><td>Playback in 4/4; clapping and matching rhythms.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Music (reference descriptions; Version 2.0 strands in brackets)</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Content description (reference)</th><th>Strand</th><th>Where Sentence Piano builds it</th></tr></thead>
+      <tbody>
+        <tr><td>Explore and imitate sounds, pitch and rhythm patterns using voice, body percussion and/or instruments. <span class="muted">(ref. VCAMUE013)</span></td><td class="b">Exploring</td><td>Pressing keys; “Copy me”; high/low pitch.</td></tr>
+        <tr><td>Sing, use body percussion and/or play instruments to improvise patterns and practise chants, songs and rhymes. <span class="muted">(ref. VCAMUM014)</span></td><td class="b">Developing Practices</td><td>Reproducing target tunes; repeating patterns.</td></tr>
+        <tr><td>Organise sounds and note values to compose and arrange a short piece. <span class="muted">(Level 1–2)</span></td><td class="b">Creating</td><td>Setting note lengths; “Compose a four‑beat bar”.</td></tr>
+        <tr><td>Perform a piece of music they have learnt or to communicate an idea. <span class="muted">(ref. VCAMUP015)</span></td><td class="b">Presenting</td><td>“Mini concert” performances.</td></tr>
+        <tr><td>Respond to music and describe features observed, including likes and dislikes. <span class="muted">(ref. VCAMUR016)</span></td><td class="b">Responding</td><td>“I like… I would change…”.</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- Appendix B -->
+    <h2>Appendix B · Quick references</h2>
+    <h3>Letter → note map</h3>
+    <p>Letters cycle through one C‑major octave. Letters that share a colour play the same note. (“C↑” is the higher C at the top of the octave.)</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Letter</th><th>Note</th><th>Letter</th><th>Note</th><th>Letter</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td class="b center">A</td><td class="center">C</td><td class="b center">J</td><td class="center">D</td><td class="b center">S</td><td class="center">E</td></tr>
+        <tr><td class="b center">B</td><td class="center">D</td><td class="b center">K</td><td class="center">E</td><td class="b center">T</td><td class="center">F</td></tr>
+        <tr><td class="b center">C</td><td class="center">E</td><td class="b center">L</td><td class="center">F</td><td class="b center">U</td><td class="center">G</td></tr>
+        <tr><td class="b center">D</td><td class="center">F</td><td class="b center">M</td><td class="center">G</td><td class="b center">V</td><td class="center">A</td></tr>
+        <tr><td class="b center">E</td><td class="center">G</td><td class="b center">N</td><td class="center">A</td><td class="b center">W</td><td class="center">B</td></tr>
+        <tr><td class="b center">F</td><td class="center">A</td><td class="b center">O</td><td class="center">B</td><td class="b center">X</td><td class="center">C↑</td></tr>
+        <tr><td class="b center">G</td><td class="center">B</td><td class="b center">P</td><td class="center">C↑</td><td class="b center">Y</td><td class="center">C</td></tr>
+        <tr><td class="b center">H</td><td class="center">C↑</td><td class="b center">Q</td><td class="center">C</td><td class="b center">Z</td><td class="center">D</td></tr>
+        <tr><td class="b center">I</td><td class="center">C</td><td class="center">—</td><td class="center">—</td><td class="center">—</td><td class="center">—</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Note values &amp; rhythm</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Note</th><th>Beats</th><th>In Sentence Piano</th></tr></thead>
+      <tbody>
+        <tr><td class="b">Quaver</td><td class="center">½</td><td>Shortest; the narrowest tile.</td></tr>
+        <tr><td class="b">Crotchet</td><td class="center">1</td><td>The default — one beat per letter.</td></tr>
+        <tr><td class="b">Minim</td><td class="center">2</td><td>Twice as wide as a crotchet.</td></tr>
+        <tr><td class="b">Semibreve</td><td class="center">4</td><td>A whole 4/4 bar in one note.</td></tr>
+        <tr><td class="b">Rest (space)</td><td class="center">1</td><td>A space is one silent beat.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted small">Four beats make one bar of 4/4 — the dashed groups in the strip each show one bar.</p>
+
+    <footer>
+      Sources: VCAA Victorian Curriculum F–10 (victoriancurriculum.vcaa.vic.edu.au and f10.vcaa.vic.edu.au) and the Victorian Department of Education implementation timeline (education.vic.gov.au). Curriculum version status current as at 2026.
+    </footer>
+   </div>
+  </div>
+
+<script>
+  (function () {
+    var b = document.getElementById("printBtn");
+    if (b) { b.addEventListener("click", function () { window.print(); }); }
+  })();
+</script>
+</body>
+</html>
