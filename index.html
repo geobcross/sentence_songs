@@ -1,19 +1,14 @@
-
-
-
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en-GB" dir="ltr">
 <head>
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1CZMQ0ZQG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-Q1CZMQ0ZQG');
-  </script>
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
@@ -199,7 +194,7 @@
   /* ---- Beat strip (shared by free strip and follow target) ---- */
   .beatstrip {
     display: flex; flex-wrap: wrap; gap: 10px 16px;
-    min-height: 92px; align-items: flex-start;
+    min-height: 116px; align-items: flex-start;
   }
   #strip:empty::after {
     content: "Your sentence will appear here as musical beats.";
@@ -214,7 +209,7 @@
   .bar:last-child { border-inline-end: none; padding-inline-end: 0; }
 
   .tile {
-    width: 54px; height: 72px; border-radius: 10px;
+    width: 54px; height: 98px; border-radius: 10px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     font-weight: 800; position: relative;
     transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
@@ -240,18 +235,19 @@
   .rest-label { font-size: 0.68rem; margin-top: 2px; opacity: 0.7; }
 
   /* editable note length (free play) */
-  #strip { --unit: 54px; }
+  #strip, #target { --unit: 54px; }
   .tile.has-dur {
     width: max(38px, calc(var(--unit) * var(--dur)));
     cursor: pointer;
+    padding-top: 24px; /* room so the note-type picture sits clear above the letter */
     box-shadow: 0 4px 0 rgba(0,0,0,0.32), 0 6px 12px rgba(0,0,0,0.28);
   }
   .tile.has-dur:hover { transform: translateY(-3px); filter: brightness(1.08); }
   .tile.has-dur:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.32); }
   .tile.has-dur:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
   .note-glyph {
-    position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
-    width: 17px; height: 20px; opacity: 0.96; pointer-events: none;
+    position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+    width: 19px; height: 22px; opacity: 0.96; pointer-events: none;
   }
   .note-glyph svg { display: block; width: 100%; height: 100%; }
   .strip-hint {
@@ -259,6 +255,7 @@
     font-size: clamp(0.9rem, 2.3vw, 1.02rem); line-height: 1.5;
   }
   .strip-hint strong { color: #ffd54a; }
+  .follow-tip { margin-top: 12px; }
 
   /* note-length picker */
   .np-panel {
@@ -395,6 +392,7 @@
   <div class="card follow-only">
     <label class="field-label">🎯 Copy this sentence <span class="sub">— press each letter in order</span></label>
     <div id="target" class="beatstrip" aria-live="polite"></div>
+    <p class="strip-hint follow-tip">👆 Tap any letter tile to change its note length — <strong>quaver, crotchet, minim or semibreve</strong>. Longer notes look wider and play for longer.</p>
     <div class="hint" id="hint"></div>
     <div class="target-tools">
       <button type="button" class="btn btn-ghost" id="newBtn">🎲 New sentence</button>
@@ -686,7 +684,7 @@
   }
 
   function buildStrip(text) { syncDurations(text.length); buildInto(stripEl, text, false, true); }
-  function buildTarget() { buildInto(targetEl, target, true, false); }
+  function buildTarget() { syncDurations(target.length); buildInto(targetEl, target, true, true); }
 
   // Build the picker's four note-picture options once.
   DUR_LIST.forEach(function (d) {
@@ -704,10 +702,9 @@
 
   var pickerIndex = -1;
   function openNotePicker(i) {
-    if (mode !== "free") { return; }
     if (playing) { stopPlayback(); }
     pickerIndex = i;
-    var ch = textarea.value.charAt(i);
+    var ch = (mode === "free") ? textarea.value.charAt(i) : target.charAt(i);
     var cur = durations[i] || 1;
     npSub.textContent = ch ? ("How long should “" + ch.toUpperCase() + "” play?") : "Pick how long this letter plays.";
     var opts = npOptions.querySelectorAll(".np-opt");
@@ -721,10 +718,10 @@
   function applyDuration(beats) {
     if (pickerIndex < 0) { return; }
     var i = pickerIndex;
-    var ch = textarea.value.charAt(i);
+    var ch = (mode === "free") ? textarea.value.charAt(i) : target.charAt(i);
     durations[i] = beats;
     closeNotePicker();
-    buildStrip(textarea.value);
+    if (mode === "free") { buildStrip(textarea.value); } else { buildTarget(); }
     if (ch) { playLive(ch); }
   }
   npOptions.addEventListener("click", function (e) {
@@ -779,7 +776,7 @@
     var offsets = [];
     var elapsed = 0;
     chars.forEach(function (ch, i) {
-      var d = (mode === "free") ? (durations[i] || 1) : 1;
+      var d = durations[i] || 1;
       var durSec = d * beat;
       offsets[i] = elapsed;
       var info = noteForChar(ch);
@@ -832,6 +829,7 @@
     stopPlayback();
     pos = 0;
     textarea.value = "";
+    durations = []; // each new sentence starts as plain crotchets until changed
     buildTarget();
     updateHint(false);
   }
@@ -1016,6 +1014,21 @@
     openNotePicker(parseInt(tile.dataset.index, 10));
   });
   stripEl.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" && e.key !== " ") { return; }
+    var tile = e.target.closest(".tile.has-dur");
+    if (!tile) { return; }
+    e.preventDefault();
+    openNotePicker(parseInt(tile.dataset.index, 10));
+  });
+
+  // Same tap-to-change-note-length on the follow-along target tiles.
+  targetEl.addEventListener("pointerdown", function (e) {
+    var tile = e.target.closest(".tile.has-dur");
+    if (!tile) { return; }
+    e.preventDefault();
+    openNotePicker(parseInt(tile.dataset.index, 10));
+  });
+  targetEl.addEventListener("keydown", function (e) {
     if (e.key !== "Enter" && e.key !== " ") { return; }
     var tile = e.target.closest(".tile.has-dur");
     if (!tile) { return; }
