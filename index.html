@@ -49,9 +49,9 @@
 
   .wrap { max-width: 980px; margin: 0 auto; }
 
-  .topbar { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+  .topbar { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
   .teacher-btn {
-    appearance: none; border: 1px solid rgba(255,255,255,0.22);
+    appearance: none; text-decoration: none; border: 1px solid rgba(255,255,255,0.22);
     background: rgba(255,255,255,0.06); color: var(--text-soft);
     font-family: inherit; font-weight: 600; font-size: 0.8rem;
     padding: 6px 13px; border-radius: 999px; cursor: pointer; opacity: 0.72;
@@ -245,20 +245,39 @@
   .tile.has-dur:hover { transform: translateY(-3px); filter: brightness(1.08); }
   .tile.has-dur:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.32); }
   .tile.has-dur:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
-  .tile.has-dur::after {
-    content: "↔"; position: absolute; bottom: 1px; right: 4px;
-    font-size: 0.72rem; font-weight: 700; color: #fff; opacity: 0.85;
+  .note-glyph {
+    position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
+    width: 17px; height: 20px; opacity: 0.96; pointer-events: none;
   }
-  .dur-badge {
-    position: absolute; top: 3px; left: 50%; transform: translateX(-50%);
-    font-size: 0.66rem; font-weight: 800; white-space: nowrap;
-    background: rgba(0,0,0,0.34); color: #fff; border-radius: 5px; padding: 1px 6px;
-  }
+  .note-glyph svg { display: block; width: 100%; height: 100%; }
   .strip-hint {
     margin: 0 0 12px; color: var(--text); font-weight: 600;
     font-size: clamp(0.9rem, 2.3vw, 1.02rem); line-height: 1.5;
   }
   .strip-hint strong { color: #ffd54a; }
+
+  /* note-length picker */
+  .np-panel {
+    background: #fff; color: var(--ink); width: 100%; max-width: 460px;
+    border-radius: 18px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); text-align: center;
+  }
+  .np-title { margin: 0 0 4px; font-size: 1.25rem; }
+  .np-sub { margin: 0 0 14px; color: #5b5676; font-size: 0.92rem; }
+  .np-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-bottom: 14px; }
+  .np-opt {
+    appearance: none; cursor: pointer; font-family: inherit; color: var(--ink);
+    border: 2px solid #d8d0ee; background: #faf8ff; border-radius: 14px;
+    padding: 10px 3px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    transition: transform 0.08s ease, border-color 0.12s ease, background 0.12s ease;
+  }
+  .np-opt:hover { transform: translateY(-2px); background: #f1ecfd; }
+  .np-opt:active { transform: translateY(1px); }
+  .np-opt:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+  .np-opt.sel { border-color: var(--green); background: #e9f8ef; }
+  .np-svg { width: 32px; height: 40px; }
+  .np-svg svg { display: block; width: 100%; height: 100%; }
+  .np-name { font-weight: 800; font-size: 0.86rem; }
+  .np-beats { font-size: 0.74rem; color: #5b5676; }
 
   .tile.active {
     transform: translateY(-8px) scale(1.08);
@@ -355,6 +374,7 @@
 <body data-mode="free">
 <div class="wrap">
   <div class="topbar">
+    <a class="teacher-btn" href="./teacher-guide.html" target="_blank" rel="noopener">📖 Teacher's Guide</a>
     <button type="button" class="teacher-btn" id="teacherBtn" aria-haspopup="dialog" aria-expanded="false">⚙️ For grown-ups</button>
   </div>
   <header>
@@ -415,7 +435,7 @@
   <!-- FREE-PLAY beat strip -->
   <div class="card free-only">
     <label class="field-label">2 · Your sentence as music <span class="sub">(each dashed group ≈ one 4/4 bar of 4 beats)</span></label>
-    <p class="strip-hint">👆 Tap the coloured letter tiles <strong>in the row below</strong> (not the keyboard) to set each note's length. Each tap makes it longer: <strong>1 crotchet → 2 minim → 4 semibreve → ½ quaver</strong> beats. Longer notes look wider; spaces stay as one‑beat rests.</p>
+    <p class="strip-hint">👆 Tap a coloured letter tile <strong>in the row below</strong> and choose its note length from the pictures — <strong>quaver, crotchet, minim or semibreve</strong>. Longer notes look wider; spaces stay as one‑beat rests.</p>
     <div id="strip" class="beatstrip" aria-live="polite"></div>
   </div>
 
@@ -442,6 +462,15 @@
         <button type="button" class="btn btn-play" id="setBtn">Set sentence</button>
         <button type="button" class="btn btn-ghost" id="closeTeacher">Close</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="notePicker" hidden>
+    <div class="np-panel" role="dialog" aria-modal="true" aria-labelledby="npTitle">
+      <h2 id="npTitle" class="np-title">🎵 Choose a note length</h2>
+      <p class="np-sub" id="npSub">Pick how long this letter plays.</p>
+      <div class="np-options" id="npOptions"></div>
+      <button type="button" class="btn btn-ghost" id="npClose">Close</button>
     </div>
   </div>
 </div>
@@ -493,6 +522,10 @@
   var teacherBtn = document.getElementById("teacherBtn");
   var teacherPanel = document.getElementById("teacherPanel");
   var closeTeacherBtn = document.getElementById("closeTeacher");
+  var notePicker = document.getElementById("notePicker");
+  var npOptions = document.getElementById("npOptions");
+  var npSub = document.getElementById("npSub");
+  var npClose = document.getElementById("npClose");
   var writeLabel = document.getElementById("writeLabel");
   var modeBtns = document.querySelectorAll(".mode-btn");
   var starsEl = document.getElementById("stars");
@@ -523,6 +556,23 @@
   };
   function durLabel(d) { var k = DUR_INFO[String(d)]; return k ? k.label : "1"; }
   function durName(d) { var k = DUR_INFO[String(d)]; return k ? k.name : "crotchet, 1 beat"; }
+
+  // The four note lengths shown in the picker, drawn as little pictures.
+  var DUR_LIST = [
+    { beats: 0.5, name: "Quaver" },
+    { beats: 1,   name: "Crotchet" },
+    { beats: 2,   name: "Minim" },
+    { beats: 4,   name: "Semibreve" }
+  ];
+  // Draw a musical note as an SVG so it shows the same everywhere.
+  function noteGlyph(beats, color) {
+    var open = beats >= 2; // minim (2) & semibreve (4) have an open (hollow) notehead
+    var head = '<ellipse cx="8" cy="18.5" rx="5.6" ry="4" transform="rotate(-22 8 18.5)" '
+      + (open ? 'fill="none" stroke="' + color + '" stroke-width="1.9"' : 'fill="' + color + '"') + '/>';
+    var stem = beats === 4 ? "" : '<line x1="13.1" y1="18.2" x2="13.1" y2="4" stroke="' + color + '" stroke-width="1.9" stroke-linecap="round"/>';
+    var flag = beats === 0.5 ? '<path d="M13.1 4.4 C18.6 6 18.8 10.6 15 12.8" fill="none" stroke="' + color + '" stroke-width="1.9" stroke-linecap="round"/>' : "";
+    return '<svg viewBox="0 0 22 24" width="100%" height="100%" aria-hidden="true" focusable="false">' + head + stem + flag + '</svg>';
+  }
   function syncDurations(len) {
     if (durations.length > len) { durations.length = len; }
     while (durations.length < len) { durations.push(1); }
@@ -596,8 +646,8 @@
         tile.style.setProperty("--dur", d);
         tile.setAttribute("role", "button");
         tile.setAttribute("tabindex", "0");
-        tile.setAttribute("aria-label", ch.toUpperCase() + ", note " + info.name + ", " + durName(d) + " — tap to change length");
-        var db = document.createElement("span"); db.className = "dur-badge"; db.textContent = durLabel(d);
+        tile.setAttribute("aria-label", ch.toUpperCase() + ", note " + info.name + ", " + durName(d) + " — tap to choose note length");
+        var db = document.createElement("span"); db.className = "note-glyph"; db.innerHTML = noteGlyph(d, "#ffffff");
         tile.appendChild(db);
       }
     } else {
@@ -634,17 +684,52 @@
   function buildStrip(text) { syncDurations(text.length); buildInto(stripEl, text, false, true); }
   function buildTarget() { buildInto(targetEl, target, true, false); }
 
-  function cycleDuration(i) {
+  // Build the picker's four note-picture options once.
+  DUR_LIST.forEach(function (d) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "np-opt";
+    b.dataset.beats = String(d.beats);
+    var beatText = d.beats === 0.5 ? "½ beat" : (d.beats + (d.beats === 1 ? " beat" : " beats"));
+    b.setAttribute("aria-label", d.name + ", " + beatText);
+    b.innerHTML = '<span class="np-svg">' + noteGlyph(d.beats, "#241546") + '</span>'
+      + '<span class="np-name">' + d.name + '</span>'
+      + '<span class="np-beats">' + beatText + '</span>';
+    npOptions.appendChild(b);
+  });
+
+  var pickerIndex = -1;
+  function openNotePicker(i) {
     if (mode !== "free") { return; }
     if (playing) { stopPlayback(); }
-    var cur = durations[i] || 1;
-    var idx = DUR_CYCLE.indexOf(cur);
-    if (idx < 0) { idx = 1; }
-    durations[i] = DUR_CYCLE[(idx + 1) % DUR_CYCLE.length];
-    buildStrip(textarea.value);
+    pickerIndex = i;
     var ch = textarea.value.charAt(i);
+    var cur = durations[i] || 1;
+    npSub.textContent = ch ? ("How long should “" + ch.toUpperCase() + "” play?") : "Pick how long this letter plays.";
+    var opts = npOptions.querySelectorAll(".np-opt");
+    var k;
+    for (k = 0; k < opts.length; k++) {
+      opts[k].classList.toggle("sel", parseFloat(opts[k].dataset.beats) === cur);
+    }
+    notePicker.hidden = false;
+  }
+  function closeNotePicker() { notePicker.hidden = true; pickerIndex = -1; }
+  function applyDuration(beats) {
+    if (pickerIndex < 0) { return; }
+    var i = pickerIndex;
+    var ch = textarea.value.charAt(i);
+    durations[i] = beats;
+    closeNotePicker();
+    buildStrip(textarea.value);
     if (ch) { playLive(ch); }
   }
+  npOptions.addEventListener("click", function (e) {
+    var o = e.target.closest(".np-opt");
+    if (!o) { return; }
+    applyDuration(parseFloat(o.dataset.beats));
+  });
+  npClose.addEventListener("click", closeNotePicker);
+  notePicker.addEventListener("pointerdown", function (e) { if (e.target === notePicker) { closeNotePicker(); } });
 
   /* ---------- Highlight (playback) ---------- */
   function clearHighlight() {
@@ -924,14 +1009,14 @@
     var tile = e.target.closest(".tile.has-dur");
     if (!tile) { return; }
     e.preventDefault();
-    cycleDuration(parseInt(tile.dataset.index, 10));
+    openNotePicker(parseInt(tile.dataset.index, 10));
   });
   stripEl.addEventListener("keydown", function (e) {
     if (e.key !== "Enter" && e.key !== " ") { return; }
     var tile = e.target.closest(".tile.has-dur");
     if (!tile) { return; }
     e.preventDefault();
-    cycleDuration(parseInt(tile.dataset.index, 10));
+    openNotePicker(parseInt(tile.dataset.index, 10));
   });
 
   /* ---------- Buttons ---------- */
@@ -951,7 +1036,11 @@
   teacherBtn.addEventListener("click", openTeacher);
   closeTeacherBtn.addEventListener("click", closeTeacher);
   teacherPanel.addEventListener("pointerdown", function (e) { if (e.target === teacherPanel) { closeTeacher(); } });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !teacherPanel.hidden) { closeTeacher(); } });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") { return; }
+    if (!teacherPanel.hidden) { closeTeacher(); }
+    if (!notePicker.hidden) { closeNotePicker(); }
+  });
 
   var chips = document.querySelectorAll(".chip");
   var ci;
